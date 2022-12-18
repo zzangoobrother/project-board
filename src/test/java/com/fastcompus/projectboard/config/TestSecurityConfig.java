@@ -1,24 +1,29 @@
 package com.fastcompus.projectboard.config;
 
-import com.fastcompus.projectboard.domain.UserAccount;
-import com.fastcompus.projectboard.repository.UserAccountRepository;
+import com.fastcompus.projectboard.dto.UserAccountDto;
+import com.fastcompus.projectboard.service.UserAccountService;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @Import(SecurityConfig.class)
 public class TestSecurityConfig {
 
     @MockBean
-    private UserAccountRepository userAccountRepository;
+    private UserAccountService userAccountService;
 
     @BeforeTestMethod
     public void securitySetUp() {
-        given(userAccountRepository.findById(any())).willReturn(Optional.of(UserAccount.of("test", "pw", "test@mail.com", "testtt", "test memo")));
+        given(userAccountService.searchUser(anyString())).willReturn(Optional.of(createUserAccountDto()));
+        given(userAccountService.saveUser(anyString(), anyString(), anyString(), anyString(), anyString())).willReturn(createUserAccountDto());
+    }
+
+    private UserAccountDto createUserAccountDto() {
+        return UserAccountDto.of("test", "pw", "test@mail.com", "testtt", "test memo");
     }
 }
